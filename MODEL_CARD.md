@@ -1,5 +1,8 @@
 # Model Card: MOOZY
 
+<!-- TODO: update arXiv URL when paper is posted -->
+**Paper:** [arXiv:XXXX.XXXXX](https://arxiv.org/abs/XXXX.XXXXX)
+
 ## Model Description
 
 MOOZY is a patient-first foundation model for computational pathology. It produces 768-dimensional embeddings at the slide and case (patient) level from whole-slide image feature grids.
