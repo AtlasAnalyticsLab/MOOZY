@@ -3,8 +3,8 @@
 :root {
   --accent: #222;
   --accent-light: rgba(0, 0, 0, 0.04);
-  --text-primary: #111;
-  --text-secondary: #333;
+  --text-primary: #000;
+  --text-secondary: #111;
   --bg-alt: #f8f9fa;
   --border: #d1d5db;
 }
@@ -20,21 +20,21 @@ body {
 
 /* Hero */
 .hero-title {
-  font-size: 2.8rem;
+  font-size: 3.2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #000;
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: var(--text-secondary);
   max-width: 700px;
   margin: 0 auto;
 }
 
 .author-list {
-  font-size: 1rem;
+  font-size: 1.15rem;
   margin-bottom: 0.5rem;
 }
 
@@ -50,7 +50,7 @@ body {
 }
 
 .affiliation-list {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--text-secondary);
 }
 
@@ -66,10 +66,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.45rem 1rem;
+  padding: 0.5rem 1.2rem;
   border: 1px solid var(--border);
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   color: var(--text-primary);
   text-decoration: none;
   transition: border-color 0.2s, background 0.2s;

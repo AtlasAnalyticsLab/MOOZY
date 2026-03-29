@@ -54,7 +54,7 @@
     <div class="stat-cards-dark">
       <div class="stat-card-dark">
         <span class="stat-number-dark">85.77M</span>
-        <span class="stat-label-dark">parameters<br>(14&times; smaller than GigaPath)</span>
+        <span class="stat-label-dark">parameters</span>
       </div>
       <div class="stat-card-dark">
         <span class="stat-number-dark">77,134</span>
@@ -77,6 +77,7 @@
 </section>
 
 <!-- ============ QUICK START ============ -->
+<hr style="border:none; border-top:1px solid #e5e7eb; max-width:200px; margin:0 auto;">
 <section class="section">
   <div class="container" style="max-width:700px">
     <h2 class="section-heading">Quick Start</h2>
@@ -99,7 +100,7 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
 <section class="section section-alt">
   <div class="container" style="max-width:850px">
     <h2 class="section-heading">Abstract</h2>
-    <p style="line-height:1.7; color: var(--text-secondary)">
+    <p style="line-height:1.8; font-size:1.1rem;">
       Computational pathology needs whole-slide image (WSI) foundation models that transfer across diverse clinical tasks, yet current approaches remain largely slide-centric, often depend on private data and expensive paired-report supervision, and do not explicitly model relationships among multiple slides from the same patient. We present MOOZY, a patient-first pathology foundation model in which the patient case, not the individual slide, is the core unit of representation. MOOZY explicitly models dependencies across all slides from the same patient via a case transformer during pretraining, combining multi-stage open self-supervision with scaled low-cost task supervision. In Stage&nbsp;1, we pretrain a vision-only slide encoder on 77,134 public slide feature grids using masked self-distillation. In Stage&nbsp;2, we align these representations with clinical semantics using a case transformer and multi-task supervision over 333 tasks from 56 public datasets, including 205 classification and 128 survival tasks across four endpoints. Across eight held-out tasks with five-fold frozen-feature probe evaluation, MOOZY achieves best or tied-best performance on most metrics and improves macro averages over TITAN by +7.37%, +5.50%, and +7.83% and over PRISM by +8.83%, +10.70%, and +9.78% for weighted F1, weighted ROC-AUC, and balanced accuracy, respectively.
     </p>
   </div>
@@ -134,7 +135,7 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
              style="width:100%; border-radius:8px;">
       </div>
       <div class="column is-6">
-        <p style="line-height:1.7">
+        <p style="line-height:1.8; font-size:1.1rem;">
           MOOZY is trained entirely on public data. Stage&nbsp;1 uses 77,134 slide feature grids
           (53,286 at 20&times; and 23,848 at 40&times;) extracted from ~1.67 billion patches across ~31.8&nbsp;TB of raw WSI data.
           Stage&nbsp;2 uses 41,089 supervised cases across 333 tasks from 56 datasets &mdash;
@@ -281,7 +282,7 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
 <section class="section">
   <div class="container">
     <h2 class="section-heading">Where Does MOOZY Look?</h2>
-    <p style="text-align:center; color: var(--text-secondary); margin-bottom:1.5rem; max-width:750px; margin-left:auto; margin-right:auto;">
+    <p style="text-align:center; margin-bottom:1.5rem; max-width:750px; margin-left:auto; margin-right:auto; font-size:1.1rem; line-height:1.8;">
       A board-certified pathologist reviewed attention maps across 20 representative WSIs and five encoders.
       MOOZY achieved the lowest mean semantic gap score (1.00) and near-balanced tumor vs. non-tumor attention (2.63),
       suggesting broad, diagnostically relevant coverage.
@@ -308,7 +309,7 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
       <span class="dot"></span>
     </div>
     <!-- Captions per slide -->
-    <div class="carousel-caption fig-caption" style="display:block">Lung adenocarcinoma. MOOZY and TITAN: balanced, comprehensive coverage. CHIEF and Madeleine: cancer-biased with semantic gaps.</div>
+    <div class="carousel-caption fig-caption" style="display:block">Attention-map comparison on a lung adenocarcinoma slide. MOOZY and TITAN: balanced, comprehensive coverage (shift 3, gap 1). PRISM: balanced shift with moderate gaps (shift 3, gap 2). CHIEF and Madeleine: cancer-biased with frequent semantic gaps (shift 2, gap 3).</div>
     <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
     <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
     <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
@@ -321,7 +322,7 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
 <section class="section section-alt" id="embeddings-section">
   <div class="container">
     <h2 class="section-heading">Embedding Quality</h2>
-    <p style="text-align:center; color: var(--text-secondary); margin-bottom:1.5rem; max-width:700px; margin-left:auto; margin-right:auto;">
+    <p style="text-align:center; margin-bottom:1.5rem; max-width:700px; margin-left:auto; margin-right:auto; font-size:1.1rem; line-height:1.8;">
       Dimensionality reduction of slide embeddings from four encoders. MOOZY shows the clearest class separation on cancer-type tasks.
     </p>
 
@@ -335,7 +336,8 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
       <button class="toggle-btn toggle-task" data-task="tcga_cancer_type">TCGA Cancer Type</button>
     </div>
 
-    <div class="embedding-grid">
+    <div id="emb-spinner" style="display:none; text-align:center; margin-bottom:0.5rem; font-size:0.85rem; color:#555;">Loading...</div>
+    <div class="embedding-grid" style="transition: opacity 0.2s;">
       <div class="emb-cell">
         <img class="emb-img" data-encoder="moozy" src="static/images/embeddings/umap_cptac_cancer_type_moozy.webp" alt="MOOZY embedding" loading="lazy">
         <p class="emb-label">MOOZY</p>
@@ -360,16 +362,11 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
 <section class="section section-alt">
   <div class="container" style="max-width:700px">
     <h2 class="section-heading">Citation</h2>
-    <div class="bibtex-block">
-      <button class="copy-btn">Copy</button>
-<code>@article{moozy2026,
-  title  = {MOOZY: A Patient-First Foundation Model for
-            Computational Pathology},
-  author = {Kotp, Yousef and Trinh, Vincent Quoc-Huy
-            and Pal, Christopher and Hosseini, Mahdi S.},
+    <div class="bibtex-block"><button class="copy-btn">Copy</button><code>@article{moozy2026,
+  title  = {MOOZY: A Patient-First Foundation Model for Computational Pathology},
+  author = {Kotp, Yousef and Trinh, Vincent Quoc-Huy and Pal, Christopher and Hosseini, Mahdi S.},
   year   = {2026}
-}</code>
-    </div>
+}</code></div>
   </div>
 </section>
 

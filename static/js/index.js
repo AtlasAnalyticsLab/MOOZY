@@ -86,23 +86,53 @@ function initEmbeddingToggles() {
   let method = "umap";
   let task = "cptac_cancer_type";
 
-  // Preload all embedding images
+  // Preload all embedding images into a cache
   const methods = ["umap", "tsne"];
   const tasks = ["cptac_cancer_type", "organs", "tcga_cancer_type"];
   const encoders = ["moozy", "titan", "madeleine", "prism"];
+  const cache = {};
   methods.forEach((m) => {
     tasks.forEach((t) => {
       encoders.forEach((e) => {
+        const key = `${m}_${t}_${e}`;
         const img = new Image();
-        img.src = `static/images/embeddings/${m}_${t}_${e}.webp`;
+        img.src = `static/images/embeddings/${key}.webp`;
+        cache[key] = img;
       });
     });
   });
 
+  const grid = section.querySelector(".embedding-grid");
+  const spinner = document.getElementById("emb-spinner");
+
   function update() {
+    let loaded = 0;
+    const total = images.length;
+    spinner.style.display = "block";
+    grid.style.opacity = "0.4";
+
     images.forEach((img) => {
       const encoder = img.dataset.encoder;
-      img.src = `static/images/embeddings/${method}_${task}_${encoder}.webp`;
+      const key = `${method}_${task}_${encoder}`;
+      const cached = cache[key];
+
+      if (cached && cached.complete) {
+        img.src = cached.src;
+        loaded++;
+        if (loaded === total) {
+          grid.style.opacity = "1";
+          spinner.style.display = "none";
+        }
+      } else {
+        img.onload = () => {
+          loaded++;
+          if (loaded === total) {
+            grid.style.opacity = "1";
+            spinner.style.display = "none";
+          }
+        };
+        img.src = `static/images/embeddings/${key}.webp`;
+      }
     });
   }
 
