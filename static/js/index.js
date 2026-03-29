@@ -86,6 +86,19 @@ function initEmbeddingToggles() {
   let method = "umap";
   let task = "cptac_cancer_type";
 
+  // Preload all embedding images
+  const methods = ["umap", "tsne"];
+  const tasks = ["cptac_cancer_type", "organs", "tcga_cancer_type"];
+  const encoders = ["moozy", "titan", "madeleine", "prism"];
+  methods.forEach((m) => {
+    tasks.forEach((t) => {
+      encoders.forEach((e) => {
+        const img = new Image();
+        img.src = `static/images/embeddings/${m}_${t}_${e}.webp`;
+      });
+    });
+  });
+
   function update() {
     images.forEach((img) => {
       const encoder = img.dataset.encoder;

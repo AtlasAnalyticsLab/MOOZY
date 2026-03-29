@@ -1,12 +1,12 @@
 /* MOOZY Project Page — Custom Styles */
 
 :root {
-  --accent: #10b981;
-  --accent-light: rgba(16, 185, 129, 0.08);
-  --text-primary: #1a1a2e;
-  --text-secondary: #555;
+  --accent: #222;
+  --accent-light: rgba(0, 0, 0, 0.04);
+  --text-primary: #111;
+  --text-secondary: #333;
   --bg-alt: #f8f9fa;
-  --border: #e5e7eb;
+  --border: #d1d5db;
 }
 
 html {
@@ -23,6 +23,7 @@ body {
   font-size: 2.8rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: #000;
 }
 
 .hero-subtitle {
@@ -44,8 +45,8 @@ body {
 }
 
 .author-list a:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  color: #000;
+  border-bottom-color: #000;
 }
 
 .affiliation-list {
@@ -75,38 +76,78 @@ body {
 }
 
 .link-row a:hover {
-  border-color: var(--accent);
+  border-color: #000;
   background: var(--accent-light);
 }
 
-/* Stat cards */
-.stat-cards {
+/* Stat row (inline, no cards) */
+.stat-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000;
+  display: block;
+}
+
+.stat-item .stat-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
+}
+
+/* Dark stat cards */
+.stat-cards-dark {
   display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.stat-card {
+.stat-card-dark {
   text-align: center;
   padding: 1.2rem 1.5rem;
-  border: 1px solid var(--border);
   border-radius: 10px;
   min-width: 140px;
   background: white;
+  border: 2px solid #1a1a2e;
 }
 
-.stat-card .stat-number {
+.stat-card-dark .stat-number-dark {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--accent);
+  color: #000;
   display: block;
 }
 
-.stat-card .stat-label {
+.stat-card-dark .stat-label-dark {
   font-size: 0.82rem;
   color: var(--text-secondary);
   margin-top: 0.2rem;
+}
+
+@media (max-width: 768px) {
+  .stat-cards-dark {
+    gap: 0.5rem;
+  }
+
+  .stat-card-dark {
+    min-width: 100px;
+    padding: 0.8rem 1rem;
+  }
+
+  .stat-card-dark .stat-number-dark {
+    font-size: 1.4rem;
+  }
 }
 
 /* Section alternating backgrounds */
@@ -137,6 +178,7 @@ body {
   font-size: 0.85rem;
   width: 100%;
   border-collapse: collapse;
+  color: var(--text-primary);
 }
 
 .results-table th,
@@ -177,8 +219,8 @@ body {
 
 /* Tabs */
 .tabs li.is-active a {
-  color: var(--accent) !important;
-  border-bottom-color: var(--accent) !important;
+  color: #000 !important;
+  border-bottom-color: #000 !important;
 }
 
 .tab-content {
@@ -210,23 +252,24 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  color: white;
   z-index: 2;
   transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .carousel-btn:hover {
-  background: white;
-  border-color: var(--accent);
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .carousel-btn.prev {
@@ -254,7 +297,7 @@ body {
 }
 
 .carousel-dots .dot.active {
-  background: var(--accent);
+  background: #333;
 }
 
 /* Embedding grid */
@@ -295,13 +338,14 @@ body {
   background: white;
   cursor: pointer;
   font-size: 0.85rem;
+  color: var(--text-primary);
   transition: all 0.2s;
 }
 
 .toggle-btn.active {
-  background: var(--accent);
+  background: #222;
   color: white;
-  border-color: var(--accent);
+  border-color: #222;
 }
 
 /* Code block */
@@ -313,11 +357,8 @@ body {
   font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.9rem;
   overflow-x: auto;
-  line-height: 1.6;
-}
-
-.code-block .prompt {
-  color: var(--accent);
+  line-height: 1.8;
+  white-space: pre;
 }
 
 .code-block .comment {
@@ -325,16 +366,25 @@ body {
 }
 
 /* BibTeX */
+.bibtex-block code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
 .bibtex-block {
   position: relative;
   background: var(--bg-alt);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem 1.2rem;
-  font-family: monospace;
-  font-size: 0.8rem;
-  white-space: pre-wrap;
-  word-break: break-all;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.82rem;
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.6;
+  color: var(--text-primary);
 }
 
 .copy-btn {
@@ -351,13 +401,13 @@ body {
 }
 
 .copy-btn:hover {
-  border-color: var(--accent);
+  border-color: #000;
 }
 
 .copy-btn.copied {
-  background: var(--accent);
+  background: #222;
   color: white;
-  border-color: var(--accent);
+  border-color: #222;
 }
 
 /* Lightbox */
@@ -383,49 +433,18 @@ body {
   object-fit: contain;
 }
 
-/* Feature cards */
-.feature-card {
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: white;
-  height: 100%;
-}
-
-.feature-card h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.feature-card p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.feature-card img {
-  border-radius: 6px;
-  margin-top: 0.8rem;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .hero-title {
     font-size: 1.8rem;
   }
 
-  .stat-cards {
-    gap: 0.5rem;
+  .stat-row {
+    gap: 1rem;
   }
 
-  .stat-card {
-    min-width: 100px;
-    padding: 0.8rem 1rem;
-  }
-
-  .stat-card .stat-number {
-    font-size: 1.4rem;
+  .stat-item .stat-number {
+    font-size: 1.3rem;
   }
 
   .embedding-grid {
@@ -443,4 +462,5 @@ body {
   font-weight: 700;
   margin-bottom: 1.5rem;
   text-align: center;
+  color: #000;
 }

@@ -24,10 +24,10 @@
     </p>
 
     <p class="author-list">
-      <a href="https://orcid.org/0009-0003-0674-5230">Yousef Kotp</a><sup>1,2</sup>,
-      <a href="#">Vincent Quoc-Huy Trinh</a><sup>3,4</sup>,
-      <a href="#">Christopher Pal</a><sup>2,5,6</sup>,
-      <a href="https://orcid.org/0000-0002-9147-0731">Mahdi S. Hosseini</a><sup>1,2,7</sup>
+      <a href="https://scholar.google.com/citations?user=YMSkXbEAAAAJ">Yousef Kotp</a><sup>1,2</sup>,
+      <a href="https://scholar.google.com/citations?user=K7Na7ZcAAAAJ">Vincent Quoc-Huy Trinh</a><sup>3,4</sup>,
+      <a href="https://scholar.google.com/citations?user=1ScWJOoAAAAJ">Christopher Pal</a><sup>2,5,6</sup>,
+      <a href="https://scholar.google.com/citations?user=SO-FFrgAAAAJ">Mahdi S. Hosseini</a><sup>1,2,7</sup>
     </p>
     <p class="affiliation-list">
       <sup>1</sup>Concordia University &ensp;
@@ -51,28 +51,47 @@
 <!-- ============ KEY NUMBERS ============ -->
 <section class="section" style="padding-top:0">
   <div class="container">
-    <div class="stat-cards">
-      <div class="stat-card">
-        <span class="stat-number">85.77M</span>
-        <span class="stat-label">parameters<br>(14&times; smaller than GigaPath)</span>
+    <div class="stat-cards-dark">
+      <div class="stat-card-dark">
+        <span class="stat-number-dark">85.77M</span>
+        <span class="stat-label-dark">parameters<br>(14&times; smaller than GigaPath)</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-number">77,134</span>
-        <span class="stat-label">public slides</span>
+      <div class="stat-card-dark">
+        <span class="stat-number-dark">77,134</span>
+        <span class="stat-label-dark">public slides</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-number">333</span>
-        <span class="stat-label">tasks from 56 datasets</span>
+      <div class="stat-card-dark">
+        <span class="stat-number-dark">333</span>
+        <span class="stat-label-dark">tasks from 56 datasets</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-number">+7.4%</span>
-        <span class="stat-label">F1 over TITAN</span>
+      <div class="stat-card-dark">
+        <span class="stat-number-dark">+7.4%</span>
+        <span class="stat-label-dark">F1 over TITAN</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-number">23</span>
-        <span class="stat-label">anatomical sites</span>
+      <div class="stat-card-dark">
+        <span class="stat-number-dark">23</span>
+        <span class="stat-label-dark">anatomical sites</span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ QUICK START ============ -->
+<section class="section">
+  <div class="container" style="max-width:700px">
+    <h2 class="section-heading">Quick Start</h2>
+    <div class="code-block"><span class="comment"># install</span>
+pip install moozy
+
+<span class="comment"># encode from pre-computed H5 feature files</span>
+moozy encode slide_1.h5 slide_2.h5 -o case_embedding.h5
+
+<span class="comment"># encode from raw whole-slide images (requires atlas-patch)</span>
+moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
+    <p style="margin-top:0.8rem; color: var(--text-secondary); font-size:0.9rem; text-align:center;">
+      Checkpoint and task definitions are downloaded automatically from
+      <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY" style="color:#333; text-decoration:underline">HuggingFace</a> on first use.
+    </p>
   </div>
 </section>
 
@@ -104,39 +123,6 @@
   </div>
 </section>
 
-<!-- ============ WHAT MAKES MOOZY DIFFERENT ============ -->
-<section class="section section-alt">
-  <div class="container">
-    <h2 class="section-heading">What Makes MOOZY Different</h2>
-    <div class="columns">
-      <div class="column is-4">
-        <div class="feature-card">
-          <h3>Patient-First</h3>
-          <p>The patient case, not the individual slide, is the unit of representation. A case transformer explicitly models cross-slide dependencies during pretraining &mdash; no post-hoc slide averaging.</p>
-          <img src="static/images/slide_enc_case_agg.webp" alt="Slide encoder and case aggregator architecture"
-               class="fig-clickable" data-full="static/images/slide_enc_case_agg.webp" loading="lazy" style="width:100%">
-        </div>
-      </div>
-      <div class="column is-4">
-        <div class="feature-card">
-          <h3>Two-Stage Open Pretraining</h3>
-          <p>Stage&nbsp;1: self-supervised slide encoder on 77K unlabeled slides. Stage&nbsp;2: multi-task alignment across 333 clinical tasks. No private data, no paired reports, no billion-parameter patch encoders.</p>
-          <img src="static/images/sparse_supervision.webp" alt="Sparse multi-task supervision"
-               class="fig-clickable" data-full="static/images/sparse_supervision.webp" loading="lazy" style="width:100%">
-        </div>
-      </div>
-      <div class="column is-4">
-        <div class="feature-card">
-          <h3>Parameter Efficient</h3>
-          <p>85.77M total parameters. 14&times; smaller than GigaPath (1.22B), 4&times; smaller than TITAN (355M), while matching or exceeding performance on held-out tasks.</p>
-          <img src="static/images/scatter_comparison_bubble.webp" alt="Parameter efficiency comparison"
-               class="fig-clickable" data-full="static/images/scatter_comparison_bubble.webp" loading="lazy" style="width:100%">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ DATA SCALE ============ -->
 <section class="section">
   <div class="container">
@@ -148,7 +134,7 @@
              style="width:100%; border-radius:8px;">
       </div>
       <div class="column is-6">
-        <p style="line-height:1.7; color: var(--text-secondary)">
+        <p style="line-height:1.7">
           MOOZY is trained entirely on public data. Stage&nbsp;1 uses 77,134 slide feature grids
           (53,286 at 20&times; and 23,848 at 40&times;) extracted from ~1.67 billion patches across ~31.8&nbsp;TB of raw WSI data.
           Stage&nbsp;2 uses 41,089 supervised cases across 333 tasks from 56 datasets &mdash;
@@ -370,37 +356,18 @@
   </div>
 </section>
 
-<!-- ============ QUICK START ============ -->
-<section class="section">
-  <div class="container" style="max-width:700px">
-    <h2 class="section-heading">Quick Start</h2>
-    <div class="code-block">
-<span class="comment"># Install</span>
-<span class="prompt">$</span> pip install moozy
-
-<span class="comment"># Encode from pre-computed H5 feature files</span>
-<span class="prompt">$</span> moozy encode slide_1.h5 slide_2.h5 -o case_embedding.h5
-
-<span class="comment"># Encode from raw whole-slide images</span>
-<span class="prompt">$</span> moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20
-    </div>
-    <p style="margin-top:0.8rem; color: var(--text-secondary); font-size:0.9rem; text-align:center;">
-      Checkpoint and task definitions are downloaded automatically from
-      <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY" style="color:var(--accent)">HuggingFace</a> on first use.
-    </p>
-  </div>
-</section>
-
 <!-- ============ BIBTEX ============ -->
 <section class="section section-alt">
   <div class="container" style="max-width:700px">
     <h2 class="section-heading">Citation</h2>
     <div class="bibtex-block">
       <button class="copy-btn">Copy</button>
-      <code>@article{moozy2026,
-  title   = {MOOZY: A Patient-First Foundation Model for Computational Pathology},
-  author  = {Kotp, Yousef and Trinh, Vincent Quoc-Huy and Pal, Christopher and Hosseini, Mahdi S.},
-  year    = {2026},
+<code>@article{moozy2026,
+  title  = {MOOZY: A Patient-First Foundation Model for
+            Computational Pathology},
+  author = {Kotp, Yousef and Trinh, Vincent Quoc-Huy
+            and Pal, Christopher and Hosseini, Mahdi S.},
+  year   = {2026}
 }</code>
     </div>
   </div>
@@ -410,12 +377,9 @@
 <footer class="footer" style="padding:2rem 1.5rem; background: var(--bg-alt);">
   <div class="container has-text-centered" style="font-size:0.85rem; color: var(--text-secondary);">
     <p>
-      <a href="https://github.com/AtlasAnalyticsLab" style="color: var(--text-secondary);">Atlas Analytics Lab</a>
+      <a href="https://atlasanalyticslab.github.io/" style="color: var(--text-secondary);">Atlas Analytics Lab</a>
       &ensp;|&ensp;
       Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: var(--text-secondary);">CC BY-NC-SA 4.0</a>
-    </p>
-    <p style="margin-top:0.3rem;">
-      Page template inspired by <a href="https://nerfies.github.io" style="color: var(--text-secondary);">Nerfies</a>.
     </p>
   </div>
 </footer>
