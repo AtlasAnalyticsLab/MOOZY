@@ -1,0 +1,26 @@
+name: Bug Report
+description: Report a bug in MOOZY
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal code or commands to reproduce the issue
+  - type: input
+    id: version
+    attributes:
+      label: MOOZY Version
+      placeholder: "0.1.0"
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Python 3.11, CUDA 12.4, Ubuntu 22.04"
