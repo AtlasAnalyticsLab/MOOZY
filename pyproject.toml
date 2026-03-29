@@ -68,6 +68,8 @@ moozy = "moozy.cli.main:main"
 [project.urls]
 Homepage = "https://github.com/AtlasAnalyticsLab/MOOZY"
 Repository = "https://github.com/AtlasAnalyticsLab/MOOZY"
+Documentation = "https://github.com/AtlasAnalyticsLab/MOOZY/tree/main/docs"
+"Model Weights" = "https://huggingface.co/AtlasAnalyticsLab/MOOZY"
 "Bug Tracker" = "https://github.com/AtlasAnalyticsLab/MOOZY/issues"
 
 [tool.setuptools.packages.find]
