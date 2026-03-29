@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+title: "MOOZY: A Patient-First Foundation Model for Computational Pathology"
+message: "If you use this software, please cite the paper below."
+type: software
+authors:
+  - family-names: Kotp
+    given-names: Yousef
+    orcid: "https://orcid.org/0009-0003-0674-5230"
+  - family-names: Trinh
+    given-names: Vincent Quoc-Huy
+  - family-names: Pal
+    given-names: Christopher
+  - family-names: Hosseini
+    given-names: Mahdi S.
+    orcid: "https://orcid.org/0000-0002-9147-0731"
+repository-code: "https://github.com/AtlasAnalyticsLab/MOOZY"
+url: "https://huggingface.co/AtlasAnalyticsLab/MOOZY"
+license: CC-BY-NC-SA-4.0
+keywords:
+  - computational pathology
+  - digital pathology
+  - histopathology
+  - foundation model
+  - whole slide image
+  - slide encoder
+  - patient encoder
+  - slide representation learning
+  - case-level embedding
+  - survival prediction
+preferred-citation:
+  type: article
+  title: "MOOZY: A Patient-First Foundation Model for Computational Pathology"
+  authors:
+    - family-names: Kotp
+      given-names: Yousef
+      orcid: "https://orcid.org/0009-0003-0674-5230"
+    - family-names: Trinh
+      given-names: Vincent Quoc-Huy
+    - family-names: Pal
+      given-names: Christopher
+    - family-names: Hosseini
+      given-names: Mahdi S.
+      orcid: "https://orcid.org/0000-0002-9147-0731"
+  year: 2026
