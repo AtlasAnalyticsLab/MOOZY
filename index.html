@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MOOZY: A Patient-First Foundation Model for Computational Pathology</title>
+  <meta name="description" content="MOOZY is a patient-first foundation model for computational pathology. 85M parameters, trained on 77K public slides across 333 clinical tasks.">
+  <meta property="og:title" content="MOOZY: A Patient-First Foundation Model for Computational Pathology">
+  <meta property="og:description" content="A patient-first pathology foundation model. 85M params. Trained on 77K public slides. 333 tasks. Fully open.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://atlasanalyticslab.github.io/MOOZY/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="section" style="padding-bottom:1.5rem">
+  <div class="container has-text-centered" style="max-width:850px">
+    <h1 class="hero-title">MOOZY</h1>
+    <p class="hero-subtitle" style="margin-bottom:1rem">
+      A Patient-First Foundation Model for Computational Pathology
+    </p>
+
+    <p class="author-list">
+      <a href="https://orcid.org/0009-0003-0674-5230">Yousef Kotp</a><sup>1,2</sup>,
+      <a href="#">Vincent Quoc-Huy Trinh</a><sup>3,4</sup>,
+      <a href="#">Christopher Pal</a><sup>2,5,6</sup>,
+      <a href="https://orcid.org/0000-0002-9147-0731">Mahdi S. Hosseini</a><sup>1,2,7</sup>
+    </p>
+    <p class="affiliation-list">
+      <sup>1</sup>Concordia University &ensp;
+      <sup>2</sup>Mila &ensp;
+      <sup>3</sup>CHUM, Universit&eacute; de Montr&eacute;al &ensp;
+      <sup>4</sup>IRIC, Universit&eacute; de Montr&eacute;al &ensp;
+      <sup>5</sup>Universit&eacute; de Montr&eacute;al &ensp;
+      <sup>6</sup>Polytechnique Montr&eacute;al &ensp;
+      <sup>7</sup>McGill University
+    </p>
+
+    <div class="link-row">
+      <a href="#">&#128196; Paper</a>
+      <a href="https://github.com/AtlasAnalyticsLab/MOOZY">&#128187; Code</a>
+      <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY">&#129303; Model</a>
+      <a href="https://pypi.org/project/moozy/">&#128230; PyPI</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KEY NUMBERS ============ -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="stat-cards">
+      <div class="stat-card">
+        <span class="stat-number">85.77M</span>
+        <span class="stat-label">parameters<br>(14&times; smaller than GigaPath)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">77,134</span>
+        <span class="stat-label">public slides</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">333</span>
+        <span class="stat-label">tasks from 56 datasets</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">+7.4%</span>
+        <span class="stat-label">F1 over TITAN</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">23</span>
+        <span class="stat-label">anatomical sites</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABSTRACT ============ -->
+<section class="section section-alt">
+  <div class="container" style="max-width:850px">
+    <h2 class="section-heading">Abstract</h2>
+    <p style="line-height:1.7; color: var(--text-secondary)">
+      Computational pathology needs whole-slide image (WSI) foundation models that transfer across diverse clinical tasks, yet current approaches remain largely slide-centric, often depend on private data and expensive paired-report supervision, and do not explicitly model relationships among multiple slides from the same patient. We present MOOZY, a patient-first pathology foundation model in which the patient case, not the individual slide, is the core unit of representation. MOOZY explicitly models dependencies across all slides from the same patient via a case transformer during pretraining, combining multi-stage open self-supervision with scaled low-cost task supervision. In Stage&nbsp;1, we pretrain a vision-only slide encoder on 77,134 public slide feature grids using masked self-distillation. In Stage&nbsp;2, we align these representations with clinical semantics using a case transformer and multi-task supervision over 333 tasks from 56 public datasets, including 205 classification and 128 survival tasks across four endpoints. Across eight held-out tasks with five-fold frozen-feature probe evaluation, MOOZY achieves best or tied-best performance on most metrics and improves macro averages over TITAN by +7.37%, +5.50%, and +7.83% and over PRISM by +8.83%, +10.70%, and +9.78% for weighted F1, weighted ROC-AUC, and balanced accuracy, respectively.
+    </p>
+  </div>
+</section>
+
+<!-- ============ PIPELINE ============ -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-heading">Two-Stage Training Pipeline</h2>
+    <div class="has-text-centered">
+      <img src="static/images/pipeline.webp" alt="MOOZY two-stage training pipeline" class="fig-clickable"
+           data-full="static/images/pipeline.webp" style="max-width:100%; border-radius:8px;">
+      <p class="fig-caption">
+        <strong>Stage&nbsp;1 (top):</strong> A frozen patch encoder extracts per-patch features arranged into a spatial grid.
+        Multi-scale crops are sampled with spatial augmentations and block-based masking.
+        A student slide encoder and EMA teacher are jointly trained via CLS-level self-distillation and masked patch prediction.
+        <strong>Stage&nbsp;2 (bottom):</strong> The pretrained slide encoder produces per-slide embeddings;
+        a case transformer aggregates them into a unified case embedding, routed to task-specific classification and survival heads.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT MAKES MOOZY DIFFERENT ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="section-heading">What Makes MOOZY Different</h2>
+    <div class="columns">
+      <div class="column is-4">
+        <div class="feature-card">
+          <h3>Patient-First</h3>
+          <p>The patient case, not the individual slide, is the unit of representation. A case transformer explicitly models cross-slide dependencies during pretraining &mdash; no post-hoc slide averaging.</p>
+          <img src="static/images/slide_enc_case_agg.webp" alt="Slide encoder and case aggregator architecture"
+               class="fig-clickable" data-full="static/images/slide_enc_case_agg.webp" loading="lazy" style="width:100%">
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="feature-card">
+          <h3>Two-Stage Open Pretraining</h3>
+          <p>Stage&nbsp;1: self-supervised slide encoder on 77K unlabeled slides. Stage&nbsp;2: multi-task alignment across 333 clinical tasks. No private data, no paired reports, no billion-parameter patch encoders.</p>
+          <img src="static/images/sparse_supervision.webp" alt="Sparse multi-task supervision"
+               class="fig-clickable" data-full="static/images/sparse_supervision.webp" loading="lazy" style="width:100%">
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="feature-card">
+          <h3>Parameter Efficient</h3>
+          <p>85.77M total parameters. 14&times; smaller than GigaPath (1.22B), 4&times; smaller than TITAN (355M), while matching or exceeding performance on held-out tasks.</p>
+          <img src="static/images/scatter_comparison_bubble.webp" alt="Parameter efficiency comparison"
+               class="fig-clickable" data-full="static/images/scatter_comparison_bubble.webp" loading="lazy" style="width:100%">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DATA SCALE ============ -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-heading">Training Data Scale</h2>
+    <div class="columns is-vcentered">
+      <div class="column is-6">
+        <img src="static/images/data_scale_overview.webp" alt="MOOZY data scale overview"
+             class="fig-clickable" data-full="static/images/data_scale_overview.webp" loading="lazy"
+             style="width:100%; border-radius:8px;">
+      </div>
+      <div class="column is-6">
+        <p style="line-height:1.7; color: var(--text-secondary)">
+          MOOZY is trained entirely on public data. Stage&nbsp;1 uses 77,134 slide feature grids
+          (53,286 at 20&times; and 23,848 at 40&times;) extracted from ~1.67 billion patches across ~31.8&nbsp;TB of raw WSI data.
+          Stage&nbsp;2 uses 41,089 supervised cases across 333 tasks from 56 datasets &mdash;
+          all 32 TCGA cohorts, all 10 CPTAC cohorts, REG, BC-Therapy, BRACS, CAMELYON17,
+          DHMC Kidney, DHMC LUAD, EBRAINS, IMP Colorectum, IMP Cervix, MBC, MUT-HET-RCC,
+          NADT Prostate, NAT-BRCA, and PANDA. Supervision covers 205 classification and 128 survival tasks
+          across four endpoints (OS, DSS, DFI, PFI) and 23 anatomical sites.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="section-heading">Results</h2>
+
+    <div class="tabs-component">
+      <div class="tabs is-centered is-boxed">
+        <ul>
+          <li class="is-active" data-target="tab-overview"><a>Overview</a></li>
+          <li data-target="tab-encoder"><a>Slide Encoder Comparison</a></li>
+          <li data-target="tab-mil"><a>MIL Comparison</a></li>
+          <li data-target="tab-ablation"><a>Ablation</a></li>
+        </ul>
+      </div>
+
+      <!-- Tab: Overview -->
+      <div id="tab-overview" class="tab-content is-active">
+        <div class="columns">
+          <div class="column is-6 has-text-centered">
+            <img src="static/images/radar_comparison.webp" alt="Radar comparison" class="fig-clickable"
+                 data-full="static/images/radar_comparison.webp" loading="lazy" style="max-width:100%; border-radius:8px;">
+            <p class="fig-caption">Macro-average radar comparison across slide encoders on eight held-out tasks.</p>
+          </div>
+          <div class="column is-6 has-text-centered">
+            <img src="static/images/scatter_comparison_bubble.webp" alt="Scatter comparison" class="fig-clickable"
+                 data-full="static/images/scatter_comparison_bubble.webp" loading="lazy" style="max-width:100%; border-radius:8px;">
+            <p class="fig-caption">Parameter count vs. macro F1. Bubble size indicates total parameters.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Encoder Comparison -->
+      <div id="tab-encoder" class="tab-content">
+        <p style="margin-bottom:1rem; color: var(--text-secondary); text-align:center; font-size:0.9rem;">
+          Frozen-feature MLP probe on eight held-out tasks. <strong>Bold</strong> = best, <u>underline</u> = second best. Mean &plusmn; std over 5 folds.
+        </p>
+        <div class="table-scroll">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th class="task-label">Task</th>
+                <th>Metric</th>
+                <th>CHIEF</th>
+                <th>GigaPath</th>
+                <th>PRISM</th>
+                <th>Madeleine</th>
+                <th>TITAN</th>
+                <th class="col-moozy">MOOZY</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="task-label" rowspan="3">Residual Cancer Burden</td><td>F1</td><td>0.46</td><td>0.45</td><td>0.46</td><td class="second">0.51</td><td>0.43</td><td class="col-moozy best">0.56</td></tr>
+              <tr><td>AUC</td><td>0.60</td><td>0.55</td><td>0.58</td><td class="second">0.63</td><td>0.58</td><td class="col-moozy best">0.74</td></tr>
+              <tr><td>Bal. Acc</td><td>0.44</td><td>0.40</td><td>0.43</td><td class="second">0.48</td><td>0.38</td><td class="col-moozy best">0.51</td></tr>
+
+              <tr><td class="task-label" rowspan="3">TP53 Mutation</td><td>F1</td><td>0.82</td><td>0.76</td><td class="second">0.85</td><td>0.84</td><td class="best">0.87</td><td class="col-moozy second">0.87</td></tr>
+              <tr><td>AUC</td><td>0.81</td><td>0.76</td><td>0.85</td><td>0.85</td><td class="best">0.91</td><td class="col-moozy second">0.86</td></tr>
+              <tr><td>Bal. Acc</td><td>0.83</td><td>0.76</td><td>0.84</td><td>0.84</td><td class="best">0.88</td><td class="col-moozy second">0.86</td></tr>
+
+              <tr><td class="task-label" rowspan="3">BAP1 Mutation</td><td>F1</td><td class="second">0.86</td><td>0.84</td><td>0.80</td><td>0.85</td><td>0.84</td><td class="col-moozy best">0.89</td></tr>
+              <tr><td>AUC</td><td>0.75</td><td>0.63</td><td>0.71</td><td>0.78</td><td class="best">0.82</td><td class="col-moozy second">0.79</td></tr>
+              <tr><td>Bal. Acc</td><td>0.75</td><td>0.66</td><td>0.66</td><td>0.75</td><td class="second">0.75</td><td class="col-moozy best">0.78</td></tr>
+
+              <tr><td class="task-label" rowspan="3">ACVR2A Mutation</td><td>F1</td><td class="second">0.89</td><td>0.80</td><td>0.85</td><td>0.89</td><td>0.87</td><td class="col-moozy best">0.91</td></tr>
+              <tr><td>AUC</td><td>0.80</td><td>0.74</td><td class="second">0.83</td><td>0.76</td><td>0.79</td><td class="col-moozy best">0.91</td></tr>
+              <tr><td>Bal. Acc</td><td>0.80</td><td>0.65</td><td class="second">0.81</td><td>0.81</td><td>0.76</td><td class="col-moozy best">0.90</td></tr>
+
+              <tr><td class="task-label" rowspan="3">Histologic Grade</td><td>F1</td><td>0.71</td><td class="second">0.77</td><td>0.73</td><td>0.75</td><td>0.73</td><td class="col-moozy best">0.78</td></tr>
+              <tr><td>AUC</td><td>0.71</td><td class="best">0.77</td><td>0.67</td><td>0.74</td><td>0.71</td><td class="col-moozy second">0.75</td></tr>
+              <tr><td>Bal. Acc</td><td>0.73</td><td class="second">0.77</td><td>0.73</td><td>0.74</td><td>0.73</td><td class="col-moozy best">0.77</td></tr>
+
+              <tr><td class="task-label" rowspan="3">KRAS Mutation</td><td>F1</td><td>0.77</td><td>0.77</td><td>0.72</td><td class="second">0.81</td><td>0.80</td><td class="col-moozy best">0.85</td></tr>
+              <tr><td>AUC</td><td>0.76</td><td>0.72</td><td>0.61</td><td>0.70</td><td class="second">0.80</td><td class="col-moozy best">0.80</td></tr>
+              <tr><td>Bal. Acc</td><td>0.74</td><td>0.76</td><td>0.63</td><td>0.77</td><td class="best">0.81</td><td class="col-moozy second">0.79</td></tr>
+
+              <tr><td class="task-label" rowspan="3">IDH Status</td><td>F1</td><td>0.92</td><td class="second">0.94</td><td>0.91</td><td>0.92</td><td>0.94</td><td class="col-moozy best">0.97</td></tr>
+              <tr><td>AUC</td><td>0.96</td><td>0.97</td><td>0.95</td><td>0.96</td><td class="second">0.97</td><td class="col-moozy best">0.99</td></tr>
+              <tr><td>Bal. Acc</td><td>0.92</td><td>0.94</td><td>0.91</td><td>0.91</td><td class="second">0.94</td><td class="col-moozy best">0.97</td></tr>
+
+              <tr><td class="task-label" rowspan="3">Treatment Response</td><td>F1</td><td>0.53</td><td>0.51</td><td class="second">0.57</td><td>0.49</td><td>0.49</td><td class="col-moozy best">0.58</td></tr>
+              <tr><td>AUC</td><td class="best">0.70</td><td>0.68</td><td class="second">0.69</td><td>0.59</td><td>0.60</td><td class="col-moozy">0.68</td></tr>
+              <tr><td>Bal. Acc</td><td>0.48</td><td>0.40</td><td class="best">0.51</td><td>0.35</td><td>0.37</td><td class="col-moozy second">0.48</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: MIL Comparison -->
+      <div id="tab-mil" class="tab-content">
+        <p style="margin-bottom:1rem; color: var(--text-secondary); text-align:center; font-size:0.9rem;">
+          Macro-average across eight held-out tasks. Each entry averages over five MIL architectures (MeanMIL, ABMIL, CLAM, DSMIL, TransMIL).
+        </p>
+        <div style="max-width:700px; margin:0 auto;">
+          <table class="results-table">
+            <thead>
+              <tr><th>Metric</th><th>Backbone</th><th>UNI v2</th><th>Phikon v2</th><th>CONCH v1.5</th><th>MUSK</th><th class="col-moozy">MOOZY</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>F1 (weighted)</td><td>0.733</td><td>0.716</td><td>0.715</td><td class="second">0.746</td><td>0.729</td><td class="col-moozy best">0.801</td></tr>
+              <tr><td>ROC-AUC (weighted)</td><td>0.735</td><td>0.719</td><td>0.724</td><td class="second">0.751</td><td>0.725</td><td class="col-moozy best">0.815</td></tr>
+              <tr><td>Balanced Acc</td><td>0.686</td><td>0.660</td><td>0.654</td><td class="second">0.696</td><td>0.679</td><td class="col-moozy best">0.758</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Ablation -->
+      <div id="tab-ablation" class="tab-content">
+        <p style="margin-bottom:1rem; color: var(--text-secondary); text-align:center; font-size:0.9rem;">
+          Macro-average across eight held-out tasks. Each stage and the case aggregator are toggled independently.
+        </p>
+        <div style="max-width:700px; margin:0 auto;">
+          <table class="results-table">
+            <thead>
+              <tr><th class="task-label">Setting</th><th>Stage 1</th><th>Stage 2</th><th>Case Agg.</th><th>F1</th><th>AUC</th><th>Bal. Acc</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="task-label">Stage 1 only</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>0.760</td><td>0.753</td><td>0.701</td></tr>
+              <tr><td class="task-label">Stage 2 only</td><td>&#10007;</td><td>&#10003;</td><td>&#10003;</td><td>0.748</td><td>0.725</td><td>0.701</td></tr>
+              <tr><td class="task-label">MOOZY w/o case agg.</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>0.771</td><td>0.789</td><td>0.729</td></tr>
+              <tr style="background: var(--accent-light)"><td class="task-label"><strong>MOOZY</strong></td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td class="best">0.801</td><td class="best">0.815</td><td class="best">0.758</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ATTENTION MAPS ============ -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-heading">Where Does MOOZY Look?</h2>
+    <p style="text-align:center; color: var(--text-secondary); margin-bottom:1.5rem; max-width:750px; margin-left:auto; margin-right:auto;">
+      A board-certified pathologist reviewed attention maps across 20 representative WSIs and five encoders.
+      MOOZY achieved the lowest mean semantic gap score (1.00) and near-balanced tumor vs. non-tumor attention (2.63),
+      suggesting broad, diagnostically relevant coverage.
+    </p>
+
+    <div class="carousel-container">
+      <button class="carousel-btn prev" aria-label="Previous">&#8249;</button>
+      <button class="carousel-btn next" aria-label="Next">&#8250;</button>
+      <div class="carousel-track">
+        <img src="static/images/attention_maps/figure_1.webp" alt="Attention map comparison 1" loading="lazy">
+        <img src="static/images/attention_maps/figure_2.webp" alt="Attention map comparison 2" loading="lazy">
+        <img src="static/images/attention_maps/figure_3.webp" alt="Attention map comparison 3" loading="lazy">
+        <img src="static/images/attention_maps/figure_4.webp" alt="Attention map comparison 4" loading="lazy">
+        <img src="static/images/attention_maps/figure_5.webp" alt="Attention map comparison 5" loading="lazy">
+        <img src="static/images/attention_maps/figure_6.webp" alt="Attention map comparison 6" loading="lazy">
+      </div>
+    </div>
+    <div class="carousel-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <!-- Captions per slide -->
+    <div class="carousel-caption fig-caption" style="display:block">Lung adenocarcinoma. MOOZY and TITAN: balanced, comprehensive coverage. CHIEF and Madeleine: cancer-biased with semantic gaps.</div>
+    <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
+    <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
+    <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
+    <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
+    <div class="carousel-caption fig-caption" style="display:none">Attention comparison across five encoders on a representative WSI.</div>
+  </div>
+</section>
+
+<!-- ============ EMBEDDINGS ============ -->
+<section class="section section-alt" id="embeddings-section">
+  <div class="container">
+    <h2 class="section-heading">Embedding Quality</h2>
+    <p style="text-align:center; color: var(--text-secondary); margin-bottom:1.5rem; max-width:700px; margin-left:auto; margin-right:auto;">
+      Dimensionality reduction of slide embeddings from four encoders. MOOZY shows the clearest class separation on cancer-type tasks.
+    </p>
+
+    <div class="toggle-row">
+      <button class="toggle-btn toggle-method active" data-method="umap">UMAP</button>
+      <button class="toggle-btn toggle-method" data-method="tsne">t-SNE</button>
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn toggle-task active" data-task="cptac_cancer_type">CPTAC Cancer Type</button>
+      <button class="toggle-btn toggle-task" data-task="organs">Anatomical Site</button>
+      <button class="toggle-btn toggle-task" data-task="tcga_cancer_type">TCGA Cancer Type</button>
+    </div>
+
+    <div class="embedding-grid">
+      <div class="emb-cell">
+        <img class="emb-img" data-encoder="moozy" src="static/images/embeddings/umap_cptac_cancer_type_moozy.webp" alt="MOOZY embedding" loading="lazy">
+        <p class="emb-label">MOOZY</p>
+      </div>
+      <div class="emb-cell">
+        <img class="emb-img" data-encoder="titan" src="static/images/embeddings/umap_cptac_cancer_type_titan.webp" alt="TITAN embedding" loading="lazy">
+        <p class="emb-label">TITAN</p>
+      </div>
+      <div class="emb-cell">
+        <img class="emb-img" data-encoder="madeleine" src="static/images/embeddings/umap_cptac_cancer_type_madeleine.webp" alt="Madeleine embedding" loading="lazy">
+        <p class="emb-label">Madeleine</p>
+      </div>
+      <div class="emb-cell">
+        <img class="emb-img" data-encoder="prism" src="static/images/embeddings/umap_cptac_cancer_type_prism.webp" alt="PRISM embedding" loading="lazy">
+        <p class="emb-label">PRISM</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUICK START ============ -->
+<section class="section">
+  <div class="container" style="max-width:700px">
+    <h2 class="section-heading">Quick Start</h2>
+    <div class="code-block">
+<span class="comment"># Install</span>
+<span class="prompt">$</span> pip install moozy
+
+<span class="comment"># Encode from pre-computed H5 feature files</span>
+<span class="prompt">$</span> moozy encode slide_1.h5 slide_2.h5 -o case_embedding.h5
+
+<span class="comment"># Encode from raw whole-slide images</span>
+<span class="prompt">$</span> moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20
+    </div>
+    <p style="margin-top:0.8rem; color: var(--text-secondary); font-size:0.9rem; text-align:center;">
+      Checkpoint and task definitions are downloaded automatically from
+      <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY" style="color:var(--accent)">HuggingFace</a> on first use.
+    </p>
+  </div>
+</section>
+
+<!-- ============ BIBTEX ============ -->
+<section class="section section-alt">
+  <div class="container" style="max-width:700px">
+    <h2 class="section-heading">Citation</h2>
+    <div class="bibtex-block">
+      <button class="copy-btn">Copy</button>
+      <code>@article{moozy2026,
+  title   = {MOOZY: A Patient-First Foundation Model for Computational Pathology},
+  author  = {Kotp, Yousef and Trinh, Vincent Quoc-Huy and Pal, Christopher and Hosseini, Mahdi S.},
+  year    = {2026},
+}</code>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer" style="padding:2rem 1.5rem; background: var(--bg-alt);">
+  <div class="container has-text-centered" style="font-size:0.85rem; color: var(--text-secondary);">
+    <p>
+      <a href="https://github.com/AtlasAnalyticsLab" style="color: var(--text-secondary);">Atlas Analytics Lab</a>
+      &ensp;|&ensp;
+      Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: var(--text-secondary);">CC BY-NC-SA 4.0</a>
+    </p>
+    <p style="margin-top:0.3rem;">
+      Page template inspired by <a href="https://nerfies.github.io" style="color: var(--text-secondary);">Nerfies</a>.
+    </p>
+  </div>
+</footer>
+
+<!-- ============ LIGHTBOX ============ -->
+<div id="lightbox" class="lightbox-overlay">
+  <img src="" alt="Full resolution">
+</div>
+
+<script src="static/js/index.js"></script>
+</body>
+</html>
