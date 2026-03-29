@@ -1,0 +1,121 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moozy"
+version = "0.1.0"
+description = "MOOZY: A Patient-First Foundation Model for Computational Pathology."
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+readme = "README.md"
+authors = [
+  {name = "Yousef Kotp", email = "yousefkotp@outlook.com"},
+]
+keywords = [
+  "pathology",
+  "computational-pathology",
+  "digital-pathology",
+  "deep-learning",
+  "foundation-model",
+  "self-supervised-learning",
+  "whole-slide-image",
+  "histopathology",
+  "medical-imaging",
+  "multiple-instance-learning",
+  "vision-transformer",
+  "slide-level-representation",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Science/Research",
+  "License :: Free for non-commercial use",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Topic :: Scientific/Engineering :: Image Recognition",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+  "Typing :: Typed",
+]
+dependencies = [
+  "h5py>=3.15,<4",
+  "huggingface-hub>=0.20,<1",
+  "numpy>=1.26,<3",
+  "PyYAML>=6,<7",
+  "scikit-survival>=0.25,<1",
+  "timm>=1.0,<2",
+  "torch>=2.9,<3",
+  "typer>=0.20,<1",
+  "wandb>=0.22,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy==1.19.1",
+  "pre-commit==4.5.1",
+  "ruff==0.15.7",
+]
+
+[project.scripts]
+moozy = "moozy.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/AtlasAnalyticsLab/MOOZY"
+Repository = "https://github.com/AtlasAnalyticsLab/MOOZY"
+"Bug Tracker" = "https://github.com/AtlasAnalyticsLab/MOOZY/issues"
+
+[tool.setuptools.packages.find]
+include = [
+  "moozy*",
+]
+exclude = [
+  "huggingface*",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+extend-exclude = [
+  "huggingface",
+]
+
+[tool.ruff.lint]
+select = ["E9", "F", "I"]
+
+[tool.mypy]
+python_version = "3.10"
+files = [
+  "moozy/config/__init__.py",
+  "moozy/config/data.py",
+  "moozy/config/model.py",
+  "moozy/config/stage1.py",
+  "moozy/config/stage2.py",
+  "moozy/config/tasks.py",
+  "moozy/config/training.py",
+  "moozy/data/stage1/types.py",
+  "moozy/data/stage2/types.py",
+  "moozy/models/factory.py",
+  "moozy/models/variants.py",
+  "moozy/training/callbacks/__init__.py",
+  "moozy/training/callbacks/checkpoint.py",
+  "moozy/training/callbacks/logging.py",
+  "moozy/training/engine/__init__.py",
+  "moozy/training/engine/base.py",
+  "moozy/training/engine/stage1.py",
+  "moozy/training/engine/stage2.py",
+  "moozy/training/runners/__init__.py",
+  "moozy/training/runners/stage1.py",
+  "moozy/training/runners/stage2.py",
+]
+follow_imports = "skip"
+ignore_missing_imports = true
+pretty = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_ignores = true

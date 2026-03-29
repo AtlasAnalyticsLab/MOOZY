@@ -1,0 +1,69 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging
+.Python
+build/
+dist/
+site/
+.eggs/
+*.egg
+*.egg-info/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.pyre/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+
+# Notebook noise
+.ipynb_checkpoints/
+
+# Local project notes
+notes.md
+
+# HuggingFace local repo
+huggingface/
+
+# Secrets and credentials
+.env
+.env.*
+credentials.json
+credentials.*
+token.json
+*.pem
+*.key
+*.secret
+secrets.*
+.secrets
+
+# Runtime outputs and artifacts
+results/
+logs/
+outputs/
+checkpoints/
+wandb/
+hyperparameters.json
+*.h5
+*.pt
+*.log
