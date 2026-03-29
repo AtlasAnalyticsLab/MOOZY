@@ -45,7 +45,7 @@ classifiers = [
 ]
 dependencies = [
   "h5py>=3.15,<4",
-  "huggingface-hub>=0.20,<1",
+  "huggingface-hub>=0.20,<2",
   "numpy>=1.26,<3",
   "PyYAML>=6,<7",
   "scikit-survival>=0.25,<1",
@@ -59,7 +59,7 @@ dependencies = [
 dev = [
   "mypy==1.19.1",
   "pre-commit==4.5.1",
-  "ruff==0.15.7",
+  "ruff==0.15.8",
 ]
 
 [project.scripts]

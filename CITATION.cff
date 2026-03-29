@@ -14,7 +14,7 @@ authors:
     given-names: Mahdi S.
     orcid: "https://orcid.org/0000-0002-9147-0731"
 repository-code: "https://github.com/AtlasAnalyticsLab/MOOZY"
-url: "https://huggingface.co/AtlasAnalyticsLab/MOOZY"
+url: "https://github.com/AtlasAnalyticsLab/MOOZY"
 license: CC-BY-NC-SA-4.0
 keywords:
   - computational pathology
