@@ -1,7 +1,6 @@
 # Model Card: MOOZY
 
-<!-- TODO: update arXiv URL when paper is posted -->
-**Paper:** [arXiv:XXXX.XXXXX](https://arxiv.org/abs/XXXX.XXXXX)
+**Paper:** [arXiv:2603.27048](https://arxiv.org/abs/2603.27048)
 
 ## Model Description
 

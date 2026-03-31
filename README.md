@@ -1,9 +1,8 @@
 # MOOZY: A Patient-First Foundation Model for Computational Pathology
 
-<!-- TODO: update arXiv URL when paper is posted -->
 <p align="center">
   <a href="https://atlasanalyticslab.github.io/MOOZY/"><img src="https://img.shields.io/badge/Project-Page-4285F4?logo=googlechrome&logoColor=white" alt="Project Page"></a>
-  <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-B31B1B?logo=arxiv" alt="arXiv"></a>
+  <a href="https://arxiv.org/abs/2603.27048"><img src="https://img.shields.io/badge/arXiv-2603.27048-B31B1B?logo=arxiv" alt="arXiv"></a>
   <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model-yellow" alt="HuggingFace"></a>
   <a href="https://pypi.org/project/moozy/"><img src="https://img.shields.io/pypi/v/moozy?logo=pypi&logoColor=white&label=PyPI" alt="PyPI"></a>
   <a href="https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey" alt="License"></a>
@@ -175,8 +174,7 @@ Frozen-feature MLP probe comparison against slide encoder baselines on eight hel
 | | AUC | **0.70** | 0.68 | 0.69 | 0.59 | 0.60 | 0.68 |
 | | Bal Acc | 0.48 | 0.40 | **0.51** | 0.35 | 0.37 | 0.48 |
 
-<!-- TODO: update arXiv link when paper is posted -->
-<p align="center"><sub>Mean values from five-fold frozen-feature evaluation. Full results with confidence intervals are in the <a href="https://arxiv.org/abs/XXXX.XXXXX">paper</a>.</sub></p>
+<p align="center"><sub>Mean values from five-fold frozen-feature evaluation. Full results with confidence intervals are in the <a href="https://arxiv.org/abs/2603.27048">paper</a>.</sub></p>
 
 Across all eight tasks, MOOZY improves macro averages over TITAN by +7.4% weighted F1, +5.5% AUC, and +7.8% balanced accuracy, and over PRISM by +8.8% F1, +10.7% AUC, and +9.8% balanced accuracy, with 14x fewer parameters than GigaPath.
 
@@ -188,13 +186,15 @@ This work was supported by NSERC-DG RGPIN-2022-05378 [M.S.H], Amazon Research Aw
 
 If you find MOOZY useful, please cite:
 
-<!-- TODO: update arXiv ID when paper is posted -->
 ```bibtex
-@article{kotp2026moozy,
-  title   = {MOOZY: A Patient-First Foundation Model for Computational Pathology},
-  author  = {Kotp, Yousef and Trinh, Vincent Quoc-Huy and Pal, Christopher and Hosseini, Mahdi S.},
-  journal = {arXiv preprint arXiv:XXXX.XXXXX},
-  year    = {2026}
+@misc{kotp2026moozypatientfirstfoundationmodel,
+      title={MOOZY: A Patient-First Foundation Model for Computational Pathology},
+      author={Yousef Kotp and Vincent Quoc-Huy Trinh and Christopher Pal and Mahdi S. Hosseini},
+      year={2026},
+      eprint={2603.27048},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2603.27048},
 }
 ```
 

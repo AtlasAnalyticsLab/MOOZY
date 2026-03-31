@@ -41,6 +41,5 @@ preferred-citation:
     - family-names: Hosseini
       given-names: Mahdi S.
       orcid: "https://orcid.org/0000-0002-9147-0731"
-  # TODO: update arXiv URL and DOI when paper is posted
-  url: "https://arxiv.org/abs/XXXX.XXXXX"
+  url: "https://arxiv.org/abs/2603.27048"
   year: 2026
