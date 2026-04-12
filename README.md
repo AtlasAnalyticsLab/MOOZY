@@ -30,6 +30,7 @@
 - [Results](#results)
 - [Notes from the Authors](#notes-from-the-authors)
   - [On using Linear vs non-Linear classifier](#on-using-linear-vs-non-linear-classifier)
+  - [On the strength of Stage 1 alone](#on-the-strength-of-stage-1-alone)
 - [Acknowledgment](#acknowledgment)
 - [Citation](#citation)
 - [Contact](#contact)
@@ -210,6 +211,27 @@ The same linear-vs-MLP question can also be asked against the patch-encoder plus
 <p align="center"><sub>Macro averages across the eight held-out tasks. Non-MOOZY rows use frozen patch features with a trained MIL aggregator head, averaged over five architectures. MOOZY uses a linear classifier on top of its frozen case embedding, with no MIL training.</sub></p>
 
 MOOZY's slide and case encoder add real signal on top of the shared patch features, but that signal is non-linearly structured. A linear head recovers the ordering but not the decision boundary, so MOOZY keeps the top ROC-AUC under the linear probe (+0.027 over CONCH v1.5) while trailing CONCH v1.5 on weighted F1 and balanced accuracy. The Backbone row tells the same story from a different angle, since its frozen features are the same ones MOOZY is built on. Under MLP, the Backbone-to-MOOZY gap is +0.068 F1, +0.080 ROC-AUC, and +0.072 balanced accuracy. Under linear, only the +0.043 ROC-AUC lift survives, and F1 and balanced accuracy fall by -0.035 and -0.012.
+
+### On the strength of Stage 1 alone
+
+A related question we have heard is how much of MOOZY's gain comes from Stage 1 (the self-supervised slide encoder) versus Stage 2 (the patient-aware multi-task alignment). We find that Stage 1 on its own is already competitive with fully-trained slide encoder baselines, while being one of the smallest pipelines in the comparison and using no paired text, no cross-stain supervision, and no slide-level labels.
+
+**Stage 1 only (MOOZY SSL) vs. other slide encoders (macro average over 8 held-out tasks, MLP probe).**
+
+| Slide encoder | Training signal | Params (total) | Weighted F1 | Weighted ROC-AUC | Balanced Accuracy |
+|---|---|---|---|---|---|
+| CHIEF | Vision SSL + weakly-supervised slide labels | **28.71M** | 0.745 | 0.761 | **0.711** |
+| GigaPath | Vision SSL (masked autoencoder) | 1.22B | 0.730 | 0.728 | 0.668 |
+| PRISM | Vision-language (paired clinical text) | 742.06M | 0.736 | 0.736 | 0.690 |
+| Madeleine | Multimodal (cross-stain supervision) | 400.23M | 0.758 | 0.751 | 0.706 |
+| TITAN | Vision-language (paired clinical captions) | 354.65M | 0.746 | **0.773** | 0.703 |
+| **MOOZY SSL (Stage 1)** | Vision SSL (masked self-distillation) | 64.47M | **0.760** | 0.753 | 0.701 |
+
+<p align="center"><sub>Macro averages across the eight held-out tasks. MOOZY SSL refers to the slide encoder after Stage 1 only, with no Stage 2 multi-task alignment and no case aggregator. Total params include the slide encoder plus its frozen patch encoder (21.67M ViT-S/8 Lunit DINOv2).</sub></p>
+
+Stage 1 on its own is the top weighted-F1 encoder in the table. Its weighted ROC-AUC trails TITAN by 0.020, and its balanced accuracy trails CHIEF by 0.010, which places Stage 1 alone in the same performance band as slide encoders that use paired captions (TITAN, PRISM), cross-stain supervision (Madeleine), or weak slide-level labels (CHIEF). It gets there with no paired supervision at all, just masked self-distillation on 77,134 unlabeled public slides.
+
+Also the closest methodological analogue is GigaPath, which is also vision-only SSL. MOOZY SSL beats it by +0.030 weighted F1, +0.025 weighted ROC-AUC, and +0.033 balanced accuracy while running at roughly 5% of its total parameter count (64.47M vs 1.22B). That gap is largely a question of where the capacity is spent. GigaPath puts almost all of its parameters into a 1.1B-parameter tile encoder, whereas MOOZY keeps a compact 21.67M ViT-S/8 patch encoder frozen and routes the remaining budget into slide-level modeling. This is the most direct evidence we have for a hypothesis we raise in the paper, that slide- and context-level modeling, not patch-level capacity, is the real bottleneck in computational pathology. It also means a useful public slide encoder can be trained on public data with self-distillation without needing paired text, IHC pairs, or labeled slides.
 
 ## Acknowledgment
 
