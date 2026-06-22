@@ -2,6 +2,8 @@
 
 **Paper:** [arXiv:2603.27048](https://arxiv.org/abs/2603.27048)
 
+**Venue:** Accepted to ECCV 2026
+
 ## Model Description
 
 MOOZY is a patient-first foundation model for computational pathology. It produces 768-dimensional embeddings at the slide and case (patient) level from whole-slide image feature grids.
@@ -50,7 +52,9 @@ Anatomical sites: adrenal gland, bladder, brain, breast, cervix, colon/rectum, e
 ## Limitations
 
 - Trained exclusively on public data, which skews toward TCGA/CPTAC demographics (predominantly North American). Performance on underrepresented populations is unknown.
-- Treatment Response (MBC) showed high variance across folds, indicating limited generalization for that specific task.
+- Produces global slide- and case-level embeddings; it does not support dense localization or segmentation outputs.
+- The benefit of explicit cross-slide aggregation has not been isolated on tasks designed to require deeper multi-slide reasoning like report generation.
+- The held-out tasks mix familiar and new cohort distributions, so the reported results are not a pure OOD evaluation of unseen patient populations.
 
 ## Ethical Considerations
 

@@ -16,6 +16,8 @@ authors:
 repository-code: "https://github.com/AtlasAnalyticsLab/MOOZY"
 url: "https://github.com/AtlasAnalyticsLab/MOOZY"
 license: CC-BY-NC-SA-4.0
+version: 0.1.0
+date-released: 2026-03-31
 keywords:
   - computational pathology
   - digital pathology
@@ -28,7 +30,7 @@ keywords:
   - case-level embedding
   - survival prediction
 preferred-citation:
-  type: article
+  type: conference-paper
   title: "MOOZY: A Patient-First Foundation Model for Computational Pathology"
   authors:
     - family-names: Kotp
@@ -42,4 +44,5 @@ preferred-citation:
       given-names: Mahdi S.
       orcid: "https://orcid.org/0000-0002-9147-0731"
   url: "https://arxiv.org/abs/2603.27048"
+  collection-title: "European Conference on Computer Vision (ECCV)"
   year: 2026

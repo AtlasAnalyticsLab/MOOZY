@@ -2,18 +2,19 @@
 
 <p align="center">
   <a href="https://atlasanalyticslab.github.io/MOOZY/"><img src="https://img.shields.io/badge/Project-Page-4285F4?logo=googlechrome&logoColor=white" alt="Project Page"></a>
+  <a href="https://eccv.ecva.net/"><img src="https://img.shields.io/badge/ECCV-2026-7B1FA2" alt="ECCV 2026"></a>
   <a href="https://arxiv.org/abs/2603.27048"><img src="https://img.shields.io/badge/arXiv-2603.27048-B31B1B?logo=arxiv" alt="arXiv"></a>
   <a href="https://huggingface.co/AtlasAnalyticsLab/MOOZY"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model-yellow" alt="HuggingFace"></a>
   <a href="https://pypi.org/project/moozy/"><img src="https://img.shields.io/pypi/v/moozy?logo=pypi&logoColor=white&label=PyPI" alt="PyPI"></a>
   <a href="https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey" alt="License"></a>
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python 3.10+"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white" alt="Python 3.11+"></a>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/AtlasAnalyticsLab/MOOZY/main/assets/paper_figures/data_scale_overview.png" width="600" alt="MOOZY: a patient-first foundation model for computational pathology, whole-slide image encoding, and case-level representation learning">
 </p>
 
-**MOOZY is a foundation model for computational pathology that treats the patient case, not the individual slide, as the fundamental unit of representation.** It encodes one or more whole-slide images (WSIs) into a single 768-dimensional case-level embedding that captures dependencies across all slides from the same patient. Trained entirely on public data with 85.8M parameters (14x smaller than GigaPath), MOOZY outperforms larger models on classification tasks across diverse organs and cancer types.
+**MOOZY is a foundation model for computational pathology that treats the patient case, not the individual slide, as the fundamental unit of representation.** It encodes one or more whole-slide images (WSIs) into a single 768-dimensional case-level embedding that captures dependencies across all slides from the same patient. Trained entirely on public data with 85.77M parameters, MOOZY achieves the strongest macro weighted F1 and balanced accuracy across sixteen held-out tasks, while remaining 14x smaller than GigaPath.
 
 ---
 
@@ -24,6 +25,7 @@
   - [Environment Setup](#environment-setup)
   - [Using the Output](#using-the-output)
 - [Method Overview](#method-overview)
+- [Evaluation](#evaluation)
 - [Training](#training)
   - [Scripts](#scripts)
   - [SLURM Jobs](#slurm-jobs)
@@ -43,6 +45,7 @@
 
 ## News
 
+- **[2026/06]** MOOZY was accepted to ECCV 2026!
 - **[2026/04]** Added 164 new TCGA staging and molecular subtype tasks to the Hugging Face repo, bringing the total to 497 tasks (MOOZY was not trained on any of these newly added tasks).
 - **[2026/04]** MOOZY is now public!
 
@@ -58,7 +61,7 @@ Model weights download automatically on first use. No access gates, no manual do
 # Encode a patient case from pre-extracted H5 feature files
 moozy encode slide_1.h5 slide_2.h5 --output case_embedding.h5
 
-# Encode directly from raw whole-slide images
+# Encode directly from raw whole-slide images (requires AtlasPatch, SAM2, and OpenSlide)
 moozy encode slide_1.svs slide_2.svs --output case_embedding.h5
 ```
 
@@ -125,15 +128,30 @@ with h5py.File("case_embedding.h5", "r") as f:
 
 MOOZY is a two-stage pipeline that first learns slide-level representations through self-supervised learning, then aligns them with clinical meaning through multi-task supervision.
 
-**Stage 1: Self-supervised slide encoder.** A vision transformer learns context-aware spatial representations from 77,134 unlabeled public histopathology slides (~1.67 billion patches across 23 anatomical sites) using masked self-distillation. No labels are used. The slide encoder captures tissue morphology, spatial context, and inter-region relationships across the whole slide.
+**Stage 1: Self-supervised slide encoder.** A vision transformer learns context-aware spatial representations from 77,134 unlabeled public histopathology slide feature grids (~1.67 billion patches across 23 anatomical sites) using masked self-distillation. No labels are used. The slide encoder captures tissue morphology, spatial context, and inter-region relationships across the whole slide.
 
 **Stage 2: Patient-aware multi-task alignment.** The pretrained slide encoder is fine-tuned end-to-end with a case transformer that models dependencies across all slides from the same patient. A learnable [CASE] token aggregates per-slide embeddings into a single case-level representation. Multi-task supervision across 333 tasks (205 classification, 128 survival) from 56 public datasets provides broad clinical grounding. All task heads are discarded after training, leaving a general-purpose patient encoder.
 
 For detailed model specifications, see the [model card](https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/MODEL_CARD.md).
 
+## Evaluation
+
+All values below are macro averages over sixteen held-out tasks using the paper's five-fold MLP-probe protocol.
+
+| Slide encoder | Weighted F1 | Weighted ROC-AUC | Balanced Accuracy |
+|---|---:|---:|---:|
+| CHIEF | 0.740 | 0.734 | 0.668 |
+| GigaPath | 0.735 | 0.706 | 0.649 |
+| PRISM | 0.738 | 0.707 | 0.656 |
+| Madeleine | 0.751 | 0.719 | 0.671 |
+| TITAN | 0.758 | **0.768** | 0.683 |
+| **MOOZY** | **0.769** | 0.763 | **0.702** |
+
+Against patch encoders paired with MILs (MeanMIL, ABMIL, CLAM, DSMIL, and TransMIL), MOOZY exceeds the strongest macro MIL baseline, CONCH v1.5, by 0.029 weighted F1, 0.043 weighted ROC-AUC, and 0.041 balanced accuracy.
+
 ## Training
 
-Both training stages are fully open-source and reproducible using only public data. All training arguments (data, model, optimization, checkpointing, logging, runtime) are documented in the [Stage 1](https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/docs/stage_1.md) and [Stage 2](https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/docs/stage_2.md) training docs.
+Both training stages are fully open-source and use public data. All training arguments (data, model, optimization, checkpointing, logging, runtime) are documented in the [Stage 1](https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/docs/stage_1.md) and [Stage 2](https://github.com/AtlasAnalyticsLab/MOOZY/blob/main/docs/stage_2.md) training docs.
 
 ### Scripts
 
@@ -166,7 +184,7 @@ A few readers have asked us why the main tables in the paper use a non-linear (M
 
 Slide-encoder embeddings are not guaranteed to be linearly separable. Some encoders (e.g. contrastive or aligned multimodal models) are explicitly trained to structure features along linear axes, while others organize information through higher-order interactions that a linear classifier cannot access. A linear probe rewards the former and can underrepresent the latter even when both carry the same useful information. We chose the MLP probe as the primary benchmark because it treats every encoder symmetrically. The classifier is free to use whichever structure is present in the features, without requiring it to be linearly separable. In pathology, clinically relevant phenotypes depend on nonlinear mixtures of cellular morphology and its spatial context, so a linear head on top of frozen slide features is expected to leave real signal unread. Linear-probe results still matter, since they are a more conservative measure of how features transfer to downstream pipelines that use a simple logistic-regression head, so we report both.
 
-The full linear-probe version of the slide-encoder comparison (L2-regularized multinomial logistic regression on the same frozen features) is reported in the appendix of our paper, alongside the per-task breakdowns. MOOZY's numbers drop when the classifier is swapped from an MLP head to a linear head, but that is true of every slide encoder we evaluated, not just MOOZY. Averaged across all six encoders (CHIEF, GigaPath, PRISM, Madeleine, TITAN, and MOOZY), the mean macro-average loss when moving from MLP to linear is about 0.097 on weighted F1, 0.027 on weighted ROC-AUC, and 0.087 on balanced accuracy. The much smaller drop on ROC-AUC is consistent with the rest of this note. A linear head preserves the ordering of predictions across the board but loses the clean decision boundary that an MLP head can find.
+The full linear-probe version of the slide-encoder comparison (L2-regularized multinomial logistic regression on the same frozen features) is reported in the appendix of our paper, alongside the per-task breakdowns. MOOZY's numbers drop when the classifier is swapped from an MLP head to a linear head, but that is true of every slide encoder we evaluated, not just MOOZY. Averaged across all six encoders (CHIEF, GigaPath, PRISM, Madeleine, TITAN, and MOOZY), the macro-average decrease from MLP to linear is approximately 0.087 weighted F1, 0.016 weighted ROC-AUC, and 0.076 balanced accuracy, based on the reported values. The smaller ROC-AUC decrease indicates that linear probes preserve ranking more than class decision boundaries.
 
 The same linear-vs-MLP question can also be asked against the patch-encoder plus trained-MIL baselines. In the table below, each non-MOOZY row pairs a frozen patch encoder with a task-specific MIL aggregator trained from scratch (MeanMIL, ABMIL, CLAM, DSMIL, TransMIL) and averages across the five architectures. The *Backbone* row uses the same ViT-S/8 Lunit DINOv2 patch encoder that MOOZY itself uses internally (Kang et al. 2023), so this row isolates what MOOZY's slide and case encoder add on top of the shared patch features.
 
@@ -174,37 +192,35 @@ The same linear-vs-MLP question can also be asked against the patch-encoder plus
 
 | Patch encoder | Weighted F1 | Weighted ROC-AUC | Balanced Accuracy |
 |---|---|---|---|
-| Backbone (MOOZY's patch encoder) | 0.733 | 0.735 | 0.686 |
-| UNI v2 | 0.716 | 0.719 | 0.660 |
-| Phikon v2 | 0.715 | 0.724 | 0.654 |
-| CONCH v1.5 | **0.746** | 0.751 | **0.696** |
-| MUSK | 0.729 | 0.725 | 0.679 |
-| **MOOZY** (linear probe) | 0.698 | **0.778** | 0.674 |
+| Backbone (MOOZY's patch encoder) | 0.723 | 0.707 | 0.643 |
+| UNI v2 | 0.722 | 0.707 | 0.637 |
+| Phikon v2 | 0.714 | 0.697 | 0.626 |
+| CONCH v1.5 | **0.740** | 0.720 | **0.661** |
+| MUSK | 0.720 | 0.695 | 0.637 |
+| **MOOZY** (linear probe) | ≈0.671 | **≈0.743** | ≈0.623 |
 
-<p align="center"><sub>Macro averages across the eight held-out tasks. Non-MOOZY rows use frozen patch features with a trained MIL aggregator head, averaged over five architectures. MOOZY uses a linear classifier on top of its frozen case embedding, with no MIL training.</sub></p>
+<p align="center"><sub>Macro averages across sixteen held-out tasks, computed from the task-level values reported in the appendix. Non-MOOZY rows use frozen patch features with a trained MIL aggregator, averaged over five architectures. MOOZY uses a linear classifier on its frozen case embedding.</sub></p>
 
-MOOZY's slide and case encoder add real signal on top of the shared patch features, but that signal is non-linearly structured. A linear head recovers the ordering but not the decision boundary, so MOOZY keeps the top ROC-AUC under the linear probe (+0.027 over CONCH v1.5) while trailing CONCH v1.5 on weighted F1 and balanced accuracy. The Backbone row tells the same story from a different angle, since its frozen features are the same ones MOOZY is built on. Under MLP, the Backbone-to-MOOZY gap is +0.068 F1, +0.080 ROC-AUC, and +0.072 balanced accuracy. Under linear, only the +0.043 ROC-AUC lift survives, and F1 and balanced accuracy fall by -0.035 and -0.012.
+Under the linear probe, MOOZY retains the strongest ROC-AUC (approximately +0.023 over CONCH v1.5) but trails it by approximately 0.069 weighted F1 and 0.038 balanced accuracy. Relative to the shared Backbone features, full MOOZY gains 0.046 F1, 0.056 ROC-AUC, and 0.059 balanced accuracy under the primary MLP protocol. Comparing MOOZY's linear probe with the Backbone MIL macro gives approximately -0.052, +0.036, and -0.020, showing that part of the learned case-level signal is non-linearly decodable.
 
 ### On the strength of Stage 1 alone
 
 A related question we have heard is how much of MOOZY's gain comes from Stage 1 (the self-supervised slide encoder) versus Stage 2 (the patient-aware multi-task alignment). We find that Stage 1 on its own is already competitive with fully-trained slide encoder baselines, while being one of the smallest models in the comparison and using no paired text, no cross-stain supervision, and no slide-level labels.
 
-**Stage 1 only (MOOZY SSL) vs. other slide encoders (macro average over 8 held-out tasks, MLP probe).**
+**Stage 1 only (MOOZY SSL) vs. other slide encoders (macro average over sixteen held-out tasks, MLP probe).**
 
 | Slide encoder | Training signal | Params (total) | Weighted F1 | Weighted ROC-AUC | Balanced Accuracy |
 |---|---|---|---|---|---|
-| CHIEF | Vision SSL + weakly-supervised slide labels | **28.71M** | 0.745 | 0.761 | **0.711** |
-| GigaPath | Vision SSL (masked autoencoder) | 1.22B | 0.730 | 0.728 | 0.668 |
-| PRISM | Vision-language (paired clinical text) | 742.06M | 0.736 | 0.736 | 0.690 |
-| Madeleine | Multimodal (cross-stain supervision) | 400.23M | 0.758 | 0.751 | 0.706 |
-| TITAN | Vision-language (paired clinical captions) | 354.65M | 0.746 | **0.773** | 0.703 |
-| **MOOZY SSL (Stage 1)** | Vision SSL (masked self-distillation) | 64.47M | **0.760** | 0.753 | 0.701 |
+| CHIEF | Vision SSL + weakly-supervised slide labels | **28.71M** | 0.740 | 0.734 | 0.668 |
+| GigaPath | Vision SSL (masked autoencoder) | 1.22B | 0.735 | 0.706 | 0.649 |
+| PRISM | Vision-language (paired clinical text) | 742.06M | 0.738 | 0.707 | 0.656 |
+| Madeleine | Multimodal (cross-stain supervision) | 400.23M | 0.751 | 0.719 | 0.671 |
+| TITAN | Vision-language (paired clinical captions) | 354.65M | **0.758** | **0.768** | **0.683** |
+| **MOOZY SSL (Stage 1)** | Vision SSL (masked self-distillation) | 64.50M | 0.743 | 0.715 | 0.662 |
 
-<p align="center"><sub>Macro averages across the eight held-out tasks. MOOZY SSL refers to the slide encoder after Stage 1 only, with no Stage 2 multi-task alignment and no case aggregator. Total params include the slide encoder plus its frozen patch encoder (21.67M ViT-S/8 Lunit DINOv2).</sub></p>
+<p align="center"><sub>Macro averages across sixteen held-out tasks. MOOZY SSL refers to the slide encoder after Stage 1 only, with no Stage 2 multi-task alignment and no case aggregator. Total params include the 42.83M slide encoder and frozen 21.67M ViT-S/8 Lunit DINO patch encoder.</sub></p>
 
-Stage 1 on its own is the top weighted-F1 encoder in the table. Its weighted ROC-AUC trails TITAN by 0.020, and its balanced accuracy trails CHIEF by 0.010, which places Stage 1 alone in the same performance band as slide encoders that use paired captions (TITAN, PRISM), cross-stain supervision (Madeleine), or weak slide-level labels (CHIEF). It gets there with no paired supervision at all, just masked self-distillation on 77,134 unlabeled public slides.
-
-Also the closest methodological analogue is GigaPath, which is also vision-only SSL. MOOZY SSL beats it by +0.030 weighted F1, +0.025 weighted ROC-AUC, and +0.033 balanced accuracy while running at roughly 5% of its total parameter count (64.47M vs 1.22B). That gap is largely a question of where the capacity is spent. GigaPath puts almost all of its parameters into a 1.1B-parameter tile encoder, whereas MOOZY keeps a compact 21.67M ViT-S/8 patch encoder frozen and routes the remaining budget into slide-level modeling. This is the most direct evidence we have for a hypothesis we raise in the paper, that slide- and context-level modeling, not patch-level capacity, is the real bottleneck in computational pathology. It also means a useful public slide encoder can be trained on public data with self-distillation without needing paired text, IHC pairs, or labeled slides.
+Stage 1 alone is competitive but is not the strongest encoder. It exceeds GigaPath by 0.008 weighted F1, 0.009 weighted ROC-AUC, and 0.013 balanced accuracy using about 5% of its parameters. It also slightly exceeds PRISM across the three macro metrics, while Madeleine and TITAN remain stronger. GigaPath puts almost all of its parameters into a 1.1B-parameter tile encoder, whereas MOOZY keeps a compact 21.67M ViT-S/8 patch encoder frozen and routes the remaining budget into slide-level modeling. This is the most direct evidence we have for a hypothesis we raise in the paper, that slide- and context-level modeling, not patch-level capacity, is the real bottleneck in computational pathology. Full MOOZY improves over Stage 1 by 3.50% weighted F1, 6.64% ROC-AUC, and 5.98% balanced accuracy.
 
 ### On the multi-task training dynamics
 
@@ -216,7 +232,7 @@ A question we keep getting about MOOZY is whether the recipe would benefit from 
 
 At the tile encoder level, [OpenMidnight](https://sophontai.com/blog/openmidnight)'s analysis notes that average performance is not cleanly correlated with compute or dataset size, and they flag two contributing factors. One is that training recipe and data quality dominate raw scale past a fairly modest data threshold. The other, which we think is worth highlighting, is that the benchmarks themselves may be part of the problem. If the benchmarks themselves cannot reliably separate strong models from weak ones, "scaling does not help" becomes hard to distinguish from "scaling helps but the benchmark cannot show it." Our reading, which we also raise in the paper, is that tile-level representations likely hit a performance ceiling well before the thresholds observed in general vision, because H&E tissue occupies a much narrower visual space than natural images. A bounded set of morphological primitives (cell types, glandular architectures, stromal patterns) rendered in a fairly narrow color palette seems to be enough for a compact public-only tile encoder to capture most of the structure that matters for downstream tasks. The benchmark caveat and the saturation hypothesis are not mutually exclusive, and both are probably part of why scaling laws look unresolved here.
 
-The same open question applies to slide encoders, and here we have even less evidence. To our knowledge there is no public study that systematically varies slide-encoder depth, width, or pretraining corpus size on a "proper" benchmark. Most comparisons in the literature conflate encoder capacity with differences in training signal (vision-only SSL, paired clinical text, cross-stain supervision, weak slide labels, and so on), so we cannot cleanly say whether a bigger slide encoder trained on more slides would beat a smaller one with a better training recipe. Our own Stage 1 result, where a 64.47M-parameter pipeline (slide encoder plus frozen patch encoder) matches or exceeds billion-parameter (e.g., GigaPath), is consistent with saturation at this level too, but it is one data point, not a scaling curve. Whether adding an order of magnitude more public slides or doubling the encoder depth would meaningfully move performance is simply not known to us. The same is true at the patient level where no scaling curves exist at all.
+The same open question applies to slide encoders, and here we have even less evidence. To our knowledge there is no public study that systematically varies slide-encoder depth, width, or pretraining corpus size on a "proper" benchmark. Most comparisons in the literature conflate encoder capacity with differences in training signal (vision-only SSL, paired clinical text, cross-stain supervision, weak slide labels, and so on), so we cannot cleanly say whether a bigger slide encoder trained on more slides would beat a smaller one with a better training recipe. Our own Stage 1 result, where a 64.50M-parameter pipeline (slide encoder plus frozen patch encoder) exceeds GigaPath across the three macro metrics, is consistent with saturation at this level too, but it is one data point, not a scaling curve. Whether adding an order of magnitude more public slides or doubling the encoder depth would meaningfully move performance is simply not known to us. The same is true at the patient level where no scaling curves exist at all.
 
 A specific scaling dimension that we did not study in this work is the number of tasks in Stage 2. MOOZY trains jointly on 333 tasks from 56 public datasets, but we never ran a controlled sweep over what happens when Stage 2 uses 30 tasks, 100 tasks, or 500. Our intuition is that the curve is non-trivial. A few dozen well-chosen tasks probably capture most of the downstream transfer benefit, and past some point additional tasks likely contribute mostly noise if not results in worse performance, but we have not verified this, and the answer almost certainly interacts with the loss weighting discussion in the previous subsection. We flag this as one of other open questions about MOOZY, and one we would like to study if we revisit MOOZY.
 
@@ -230,17 +246,20 @@ MOOZY itself is a single-vector model, and the results in this repository should
 
 ### On Benchmarking
 
-We want to flag a methodological caveat in how we evaluate. The cohorts behind our held-out tasks are not entirely out of distribution. Their slides overlap with the cohorts used in both training stages (stage 1 and 2), so the underlying slide distribution (morphology, staining, scanners, demographics) is plausibly familiar to the model, and there is a real possibility that some of our headline numbers are inflated by this overlap. They should be read as transfer within a partially overlapping universe of cohorts, not as pure out of distribution (OOD) generalization to genuinely unseen patient populations. To partially address this, we are currently structuring our evaluation along two axes, and we recommend future patient/slide-encoder work do the same: i) Cohorts absent from both stages, the task is evaluated on a dataset whose slides were never in Stage 1 SSL nor in Stage 2 supervision. This is the cleanest test of cohort-level generalization, and ii) Task families absent from Stage 2 within seen cohorts, the cohort was visible during pretraining, but the family of clinical readout being probed was not part of Stage 2 supervision on that cohort. This isolates how well the representation transfers to a new clinical readout while holding the slide distribution roughly fixed.
+We want to flag a methodological caveat in how we evaluate. Across the sixteen-task benchmark, some evaluations use additional cohorts while others test held-out clinical readouts in datasets represented elsewhere during training. The benchmark therefore mixes cohort-level and task-family transfer and should not be interpreted as a pure out-of-distribution generalization. Future evaluation should report these axes separately: (i) cohorts absent from both stages, and (ii) task families absent from Stage 2 within otherwise familiar cohorts.
 
 The two axes test different things and both matter. Cohort generalization is the more clinically meaningful direction. Task-family generalization is a cleaner probe of representation quality, where with cohort shift held roughly fixed, it isolates whether the learned features carry signal beyond the specific clinical readouts that Stage 2 supervised against. Without reporting along both axes, headline numbers can look like generalization but be partly a function of evaluation-cohort overlap with pretraining.
 
 ### On Hyperparameters of Second Stage
 
-Our compute budget did not allow a broad sweep over the second-stage configuration space, learning rate schedules, warmup, weight decay, loss weighting, which slide-encoder layers to fine-tune, freezing slide encoder, and so on. What we ended up reporting is the configuration that performed best on the eight held-out tasks, which is a perfectly normal thing to do, but it inherits the issue we raise in [On Benchmarking](#on-benchmarking). If the held-out tasks themselves draw from cohorts that were partially visible during pretraining, then selecting hyperparameters against those tasks can quietly tune the model to that same overlapping evaluation universe rather than to a genuinely held-out signal. Stage 2 configuration is not optimal in any global sense, it is the best we found within a constrained search, and there are almost certainly better settings we did not get to explore. We strongly encourage the community to run controlled Stage 2 hyperparameter ablations themselves, ideally with model selection done on the two evaluation axes from the previous subsection rather than on a task suite that may share cohort distribution with pretraining.
+Our compute budget did not allow a broad sweep over the second-stage configuration space, including but not limited to learning-rate schedules, warmup, weight decay, task weighting, and slide-encoder freezing. The reported configuration reflects a constrained search and should not be interpreted as globally optimal.  What we ended up reporting is the configuration that performed best on eight held-out tasks out of sixteen, which is a perfectly normal thing to do, but it inherits the issue we raise in [On Benchmarking](#on-benchmarking). If the held-out tasks themselves draw from cohorts that were partially visible during pretraining, then selecting hyperparameters against those tasks can quietly tune the model to that same overlapping evaluation universe rather than to a genuinely held-out signal. We strongly encourage the community to run controlled Stage 2 hyperparameter ablations themselves, ideally with model selection done on the two evaluation axes from the previous subsection rather than on a task suite that may share cohort distribution with pretraining.
 
 ### On Case Aggregator
 
 We call the second-stage module that turns slide tokens into a `[CASE]` embedding the "case aggregator", and that name is convenient but, we think, slightly misleading. The clearest piece of evidence comes from Residual Cancer Burden task, every patient in RCB contributes exactly one slide, so the slides-per-patient ratio is 1.0. There is nothing to aggregate, and yet, in our case-aggregator ablation, adding the case aggregator helped in that task. Our reading is that the case transformer is best thought of as a *task-distribution projection head*, not just a pooling operation. During Stage 2 it is trained jointly with the slide encoder over supervised tasks, and the `[CASE]` query learns to attend over slide tokens and re-project them into a subspace that is shaped by the distribution of those tasks. When the case has multiple slides, the projection happens to also pool across them, which is the role the name "aggregator" captures. When the case has a single slide, the same module still runs, and it still applies that learned re-projection. Mechanically, it is transforming a slide representation that was optimized largely by Stage 1 SSL, into a representation that lives in the joint geometry of all the case-level pathology tasks the model was aligned to. The downstream probe then sees a more linearly (or shallow-MLP) decodable signal. The implication which we want to flag explicitly, is that "case aggregator" undersells what this module does and over-constrains how the community might think about it. It is a learned, case-level, task-aware projection that *also* aggregates when there is more than one slide. We think the more accurate framing is closer to a case-level adapter that closes the gap between a generic slide representation and the distribution of clinical readouts the model was supervised against. 
+
+It is worth mentioning that the case aggregator raises macro weighted F1 from 0.749 to 0.769, ROC-AUC from 0.737 to 0.763, and balanced accuracy from 0.682 to 0.702. It improves F1 on 14 of 16 tasks, ROC-AUC on 12, and balanced accuracy on 13. 11 tasks improve across all three metrics.
+
 
 ## Acknowledgment
 
@@ -251,14 +270,12 @@ This work was supported by NSERC-DG RGPIN-2022-05378 [M.S.H], Amazon Research Aw
 If you find MOOZY useful, please cite:
 
 ```bibtex
-@misc{kotp2026moozypatientfirstfoundationmodel,
-      title={MOOZY: A Patient-First Foundation Model for Computational Pathology},
-      author={Yousef Kotp and Vincent Quoc-Huy Trinh and Christopher Pal and Mahdi S. Hosseini},
-      year={2026},
-      eprint={2603.27048},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2603.27048},
+@inproceedings{kotp2026moozypatientfirstfoundationmodel,
+  title={MOOZY: A Patient-First Foundation Model for Computational Pathology},
+  author={Kotp, Yousef and Trinh, Vincent Quoc-Huy and Pal, Christopher and Hosseini, Mahdi S.},
+  booktitle={European Conference on Computer Vision (ECCV)},
+  year={2026},
+  url={https://arxiv.org/abs/2603.27048},
 }
 ```
 

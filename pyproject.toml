@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "moozy"
 version = "0.1.0"
 description = "MOOZY: A Patient-First Foundation Model for Computational Pathology."
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {file = "LICENSE"}
 readme = "README.md"
 authors = [
@@ -33,7 +33,6 @@ classifiers = [
   "License :: Free for non-commercial use",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -66,9 +65,10 @@ dev = [
 moozy = "moozy.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/AtlasAnalyticsLab/MOOZY"
+Homepage = "https://atlasanalyticslab.github.io/MOOZY/"
 Repository = "https://github.com/AtlasAnalyticsLab/MOOZY"
 Documentation = "https://github.com/AtlasAnalyticsLab/MOOZY/tree/main/docs"
+"Paper" = "https://arxiv.org/abs/2603.27048"
 "Model Weights" = "https://huggingface.co/AtlasAnalyticsLab/MOOZY"
 "Bug Tracker" = "https://github.com/AtlasAnalyticsLab/MOOZY/issues"
 
@@ -81,7 +81,7 @@ exclude = [
 ]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 line-length = 120
 extend-exclude = [
   "huggingface",
@@ -91,7 +91,7 @@ extend-exclude = [
 select = ["E9", "F", "I"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 files = [
   "moozy/config/__init__.py",
   "moozy/config/data.py",
