@@ -30,13 +30,13 @@
       <a href="https://scholar.google.com/citations?user=SO-FFrgAAAAJ">Mahdi S. Hosseini</a><sup>1,2,7</sup>
     </p>
     <p class="affiliation-list">
-      <sup>1</sup>Concordia University &ensp;
-      <sup>2</sup>Mila &ensp;
-      <sup>3</sup>CHUM, Universit&eacute; de Montr&eacute;al &ensp;
-      <sup>4</sup>IRIC, Universit&eacute; de Montr&eacute;al &ensp;
-      <sup>5</sup>Universit&eacute; de Montr&eacute;al &ensp;
-      <sup>6</sup>Polytechnique Montr&eacute;al &ensp;
-      <sup>7</sup>McGill University
+      <sup>1</sup>CSSE, Concordia University, Montr&eacute;al, Canada &ensp;
+      <sup>2</sup>Mila &ndash; Qu&eacute;bec AI Institute, Montr&eacute;al, Canada &ensp;
+      <sup>3</sup>CHUM, Universit&eacute; de Montr&eacute;al, Montr&eacute;al, Canada &ensp;
+      <sup>4</sup>IRIC, Universit&eacute; de Montr&eacute;al, Montr&eacute;al, Canada &ensp;
+      <sup>5</sup>Universit&eacute; de Montr&eacute;al, Montr&eacute;al, Canada &ensp;
+      <sup>6</sup>Canada CIFAR Chair, Polytechnique Montr&eacute;al, Montr&eacute;al, Canada &ensp;
+      <sup>7</sup>Dept. of Pathology, McGill University, Montr&eacute;al, Canada
     </p>
 
     <p class="venue-badge" style="margin:0.25rem 0 0.9rem; font-weight:600; letter-spacing:0.02em;"><a href="https://eccv.ecva.net/" style="color:#7B1FA2;">&#127942; Accepted at ECCV 2026</a></p>
@@ -165,15 +165,20 @@ moozy encode slide_1.svs slide_2.svs -o case_embedding.h5 --target_mag 20</div>
       <!-- Tab: Overview -->
       <div id="tab-overview" class="tab-content is-active">
         <div class="columns">
-          <div class="column is-6 has-text-centered">
-            <img src="static/images/radar_comparison.webp" alt="Radar comparison" class="fig-clickable"
+          <div class="column is-4 has-text-centered">
+            <img src="static/images/radar_comparison.webp" alt="MLP-probe weighted F1 radar comparison across slide encoders" class="fig-clickable"
                  data-full="static/images/radar_comparison.webp" loading="lazy" style="max-width:100%; border-radius:8px;">
-            <p class="fig-caption">Macro-average radar comparison across slide encoders on sixteen held-out tasks.</p>
+            <p class="fig-caption"><strong>(a)</strong> MLP-probe weighted F1 across sixteen held-out tasks. Brackets show [min&ndash;max] per task (center&nbsp;=&nbsp;min, outer ring&nbsp;=&nbsp;max).</p>
           </div>
-          <div class="column is-6 has-text-centered">
-            <img src="static/images/scatter_comparison_bubble.webp" alt="Scatter comparison" class="fig-clickable"
+          <div class="column is-4 has-text-centered">
+            <img src="static/images/radar_comparison_linear.webp" alt="Linear-probe weighted F1 radar comparison across slide encoders" class="fig-clickable"
+                 data-full="static/images/radar_comparison_linear.webp" loading="lazy" style="max-width:100%; border-radius:8px;">
+            <p class="fig-caption"><strong>(b)</strong> Linear-probe weighted F1 across the same sixteen held-out tasks.</p>
+          </div>
+          <div class="column is-4 has-text-centered">
+            <img src="static/images/scatter_comparison_bubble.webp" alt="Macro-averaged weighted F1 versus total parameter count" class="fig-clickable"
                  data-full="static/images/scatter_comparison_bubble.webp" loading="lazy" style="max-width:100%; border-radius:8px;">
-            <p class="fig-caption">Parameter count vs. macro F1 across sixteen held-out tasks. Bubble size indicates total parameters.</p>
+            <p class="fig-caption"><strong>(c)</strong> Macro-averaged weighted F1 (MLP probe) vs. total parameter count (log scale). Bubble size indicates total parameters.</p>
           </div>
         </div>
       </div>
