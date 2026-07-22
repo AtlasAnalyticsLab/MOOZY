@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 
+## [0.1.1] - 2026-07-21
+
+### Changed
+
+- Synchronized the repository documentation, model card, and citation metadata with the ECCV 2026 camera-ready paper.
+- Expanded the Notes from the Authors with discussions of generalization, case aggregation, benchmarking, and Stage 2 hyperparameters.
+- Updated the reported evaluation results and supporting analysis to cover all sixteen held-out tasks.
+
+
 ## [0.1.0] - 2026-03-31
 
 ### Added

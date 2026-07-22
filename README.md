@@ -32,6 +32,7 @@
 - [Notes from the Authors](#notes-from-the-authors)
   - [On using Linear vs non-Linear classifier](#on-using-linear-vs-non-linear-classifier)
   - [On the strength of Stage 1 alone](#on-the-strength-of-stage-1-alone)
+  - [On Generalization](#on-generalization)
   - [On the multi-task training dynamics](#on-the-multi-task-training-dynamics)
   - [On the effect of scaling](#on-the-effect-of-scaling)
   - [On the limitations of slide encoders](#on-the-limitations-of-slide-encoders)
@@ -221,6 +222,14 @@ A related question we have heard is how much of MOOZY's gain comes from Stage 1 
 <p align="center"><sub>Macro averages across sixteen held-out tasks. MOOZY SSL refers to the slide encoder after Stage 1 only, with no Stage 2 multi-task alignment and no case aggregator. Total params include the 42.83M slide encoder and frozen 21.67M ViT-S/8 Lunit DINO patch encoder.</sub></p>
 
 Stage 1 alone is competitive but is not the strongest encoder. It exceeds GigaPath by 0.008 weighted F1, 0.009 weighted ROC-AUC, and 0.013 balanced accuracy using about 5% of its parameters. It also slightly exceeds PRISM across the three macro metrics, while Madeleine and TITAN remain stronger. GigaPath puts almost all of its parameters into a 1.1B-parameter tile encoder, whereas MOOZY keeps a compact 21.67M ViT-S/8 patch encoder frozen and routes the remaining budget into slide-level modeling. This is the most direct evidence we have for a hypothesis we raise in the paper, that slide- and context-level modeling, not patch-level capacity, is the real bottleneck in computational pathology. Full MOOZY improves over Stage 1 by 3.50% weighted F1, 6.64% ROC-AUC, and 5.98% balanced accuracy.
+
+### On Generalization
+
+If we had to choose the most generalizable encoder we have seen, our personal pick would be TITAN. We mean that as our reading of the evidence in this paper, not as a claim that any benchmark can establish a universally best encoder. Under the MLP-probe, TITAN is the strongest conventional slide encoder on all three macro averages by 0.758 weighted F1, 0.768 weighted ROC-AUC, and 0.683 balanced accuracy. It is also the only baseline to exceed full MOOZY on a macro metric, with 0.768 versus 0.763 ROC-AUC. In Table 1 results, TITAN leads or ties the five conventional slide encoders on 27 of the 48 task-metric comparisons. Recomputing the macro averages from the linear-probe table gives TITAN approximately 0.689 weighted F1, 0.756 weighted ROC-AUC, and 0.627 balanced accuracy, the strongest values of every encoder evaluated, including MOOZY, while TITAN leads or ties the conventional slide encoders on 29 of 48 task-metric comparisons. That consistency across probe capacity, organs, and clinical endpoints is what makes TITAN stand out to us. We do not read this as evidence that TITAN understands cross-slide relationships, we read it as evidence that its individual slide representations are unusually transferable and remain useful even after a lossy patient-level reduction.
+
+Our interpretation and intuition is that language is an *extremely rich* supervisory signal for learning such representations. TITAN combines slide-level pathology reports with fine-grained synthetic region captions, and our qualitative results point in the same direction as the probe results. However, PRISM is the counterexample. It is also language-supervised, and it was trained at large scale with clinical reports, yet in both MLP and linear probes, PRISM underperfoms compared to TITAN. Since both's training data are not publicly released, we cannot tell whether TITAN's advantage comes from the language objective itself, richer reports, better case diversity, the synthetic region captions, data curation, or some interaction among them.
+
+Our experiments points that TITAN learns an exceptionally general slide representation and that language supervision is probably a major reason, but they cannot tell us why language supervision works so much better for TITAN than for PRISM.
 
 ### On the multi-task training dynamics
 
